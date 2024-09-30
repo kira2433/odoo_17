@@ -1,0 +1,37 @@
+services:
+  web17:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    depends_on:
+      - db17
+    ports:
+      - "3030:8069"
+      - "8088:8072"
+    volumes:
+      - odoo-web17-data:/var/lib/odoo
+      - ./configurations/dev/config:/etc/odoo
+      - ./addons:/mnt/addons
+    environment:
+      - DB_HOST=db17
+      - DB_USER=odoo
+      - DB_PASSWORD=odoo16
+    restart: always
+    tty: true
+  
+  db17:
+    image: postgres:16
+    environment:
+      - POSTGRES_DB=postgres
+      - POSTGRES_PASSWORD=odoo16
+      - POSTGRES_USER=odoo
+      - PGDATA=/var/lib/postgresql/data/pgdata
+    restart: always
+    ports:
+      - "2648:5432"
+    volumes:
+      - odoo-db17-data:/var/lib/postgresql/data/pgdata
+
+volumes:
+  odoo-web17-data:
+  odoo-db17-data:
